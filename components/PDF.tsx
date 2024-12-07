@@ -8,12 +8,11 @@ import {
   Image,
 } from "@react-pdf/renderer";
 
-import LogoPortal from "../public/logo-portal.png";
 import { FormValues } from "./utils";
 
 const styles = StyleSheet.create({
   page: {
-    marginTop: 100,
+    marginTop: 80,
   },
   mainContainer: {
     marginHorizontal: "auto",
@@ -62,12 +61,38 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "black",
     borderStyle: "solid",
-    marginTop: 30,
+    marginTop: 20,
+  },
+  detalleSection: {
+    borderWidth: 1,
+    borderColor: "black",
+    borderStyle: "solid",
+    marginTop: 10,
+    minHeight: "55%",
+    position: "relative",
+  },
+  detallePadding: {
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    fontSize: 8,
+  },
+  linea: {
+    position: "absolute",
+    height: "100%",
+    width: 1,
+    backgroundColor: "black",
+    top: 0,
+    zIndex: "-1",
+  },
+  border: {
+    borderWidth: 1,
+    borderColor: "black",
+    borderStyle: "solid",
   },
 });
 
 const PDF = ({
-  itemsList: [{ descripcion, cantidad, precio }],
+  itemsList,
   comprobante = "",
   presupuesto,
   fecha,
@@ -80,6 +105,25 @@ const PDF = ({
   condVenta,
 }: FormValues) => {
   const [year, month, day] = fecha.split("-");
+
+  const datosprueba = [
+    {
+      descripcion:
+        "computadora texto my largo probemos que pasa computadora texto my largo probemos que pasa computadora texto my largo probemos que pasa",
+      cantidad: 2,
+      precio: 900000,
+    },
+    {
+      descripcion: "teclado",
+      cantidad: 2,
+      precio: 40000,
+    },
+    {
+      descripcion: "mouse",
+      cantidad: 2,
+      precio: 15000,
+    },
+  ];
 
   return (
     <Document>
@@ -256,41 +300,147 @@ const PDF = ({
                 </View>
               </View>
             </View>
-            <View style={{ flex: 1 }}>
+            <View
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+              }}
+            >
               <View style={styles.datoHeader}>
-                <Text style={[styles.textSize, { flex: 1 }]}>I.V.A.:</Text>
+                <Text
+                  style={[styles.textSize, { flex: 1, textAlign: "right" }]}
+                >
+                  I.V.A.:
+                </Text>
                 <Text
                   style={[
                     styles.textSize,
-                    { flex: 0.8, textAlign: "left", marginLeft: 3 },
+                    { flex: 2, textAlign: "left", marginLeft: 3 },
                   ]}
                 >
                   {IVA}
                 </Text>
               </View>
               <View style={styles.datoHeader}>
-                <Text style={[styles.textSize, { flex: 1 }]}>EXPTE. Nº :</Text>
+                <Text
+                  style={[styles.textSize, { flex: 1, textAlign: "right" }]}
+                >
+                  EXPTE. Nº :
+                </Text>
                 <Text
                   style={[
                     styles.textSize,
-                    { flex: 0.8, textAlign: "left", marginLeft: 3 },
+                    { flex: 2, textAlign: "left", marginLeft: 3 },
                   ]}
                 >
                   {expediente}
                 </Text>
               </View>
               <View style={styles.datoHeader}>
-                <Text style={[styles.textSize, { flex: 1 }]}>Cond. Venta:</Text>
+                <Text
+                  style={[styles.textSize, { flex: 1, textAlign: "right" }]}
+                >
+                  Cond. Venta:
+                </Text>
                 <Text
                   style={[
                     styles.textSize,
-                    { flex: 0.8, textAlign: "left", marginLeft: 3 },
+                    { flex: 2, textAlign: "left", marginLeft: 3 },
                   ]}
                 >
                   {condVenta}
                 </Text>
               </View>
             </View>
+          </View>
+          <View style={styles.detalleSection}>
+            <Text
+              style={{
+                backgroundColor: "black",
+                textAlign: "center",
+                paddingVertical: 2,
+                color: "white",
+                fontSize: 9,
+              }}
+            >
+              DETALLE
+            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                borderBottom: "1px solid black",
+              }}
+            >
+              <View style={[styles.detallePadding, { flex: 1 }]}>
+                <Text>Item</Text>
+              </View>
+              <View style={[styles.detallePadding, { flex: 15 }]}>
+                <Text>Descripción</Text>
+              </View>
+              <View style={[styles.detallePadding, { flex: 2 }]}>
+                <Text>Cantidad</Text>
+              </View>
+              <View style={[styles.detallePadding, { flex: 4 }]}>
+                <Text>Precio</Text>
+              </View>
+              <View style={[styles.detallePadding, { flex: 4 }]}>
+                <Text>Subtotal</Text>
+              </View>
+            </View>
+            {itemsList?.length > 0 &&
+              itemsList?.map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    position: "relative",
+                    borderBottom: "1px solid black",
+                  }}
+                >
+                  <View
+                    style={[
+                      styles.detallePadding,
+                      { flex: 1, textAlign: "center" },
+                    ]}
+                  >
+                    <Text>{index + 1}</Text>
+                  </View>
+                  <View style={[styles.detallePadding, { flex: 15 }]}>
+                    <Text>{item.descripcion}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.detallePadding,
+                      { flex: 2, textAlign: "center" },
+                    ]}
+                  >
+                    <Text>{item.cantidad}</Text>
+                  </View>
+                  <View style={[styles.detallePadding, { flex: 4 }]}>
+                    <Text>${item?.precio?.toLocaleString("es-ES")}</Text>
+                  </View>
+                  <View style={[styles.detallePadding, { flex: 4 }]}>
+                    <Text>
+                      $
+                      {item?.precio && item?.cantidad
+                        ? (item?.precio * item?.cantidad).toLocaleString(
+                            "es-ES"
+                          )
+                        : 0}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            <View style={[styles.linea, { left: 29 }]} />
+            <View style={[styles.linea, { left: 315 }]} />
+            <View style={[styles.linea, { left: 363 }]} />
+            <View style={[styles.linea, { left: 445 }]} />
           </View>
         </View>
       </Page>
