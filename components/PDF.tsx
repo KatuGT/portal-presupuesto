@@ -106,25 +106,6 @@ const PDF = ({
 }: FormValues) => {
   const [year, month, day] = fecha.split("-");
 
-  const datosprueba = [
-    {
-      descripcion:
-        "computadora texto my largo probemos que pasa computadora texto my largo probemos que pasa computadora texto my largo probemos que pasa",
-      cantidad: 2,
-      precio: 900000,
-    },
-    {
-      descripcion: "teclado",
-      cantidad: 2,
-      precio: 40000,
-    },
-    {
-      descripcion: "mouse",
-      cantidad: 2,
-      precio: 15000,
-    },
-  ];
-
   return (
     <Document>
       <Page size="A4" style={styles.page}>

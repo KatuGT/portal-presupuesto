@@ -3,8 +3,7 @@ import Image from "next/image";
 import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
 import { Control, useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useEffect } from "react";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import { useEffect, useState } from "react";
 
 import { subtitle } from "@/components/primitives";
 import Logo from "@/public/logo-portal.png";
@@ -14,6 +13,9 @@ import {
   FormValues,
 } from "@/components/utils";
 import PDF from "@/components/PDF";
+import { PDFViewer } from "@react-pdf/renderer";
+
+
 function getTotal(payload: FormValues["itemsList"]) {
   let total = 0;
 
@@ -97,6 +99,12 @@ export default function Home() {
     }
   }, [vendedor, reset, getValues]);
 
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
+
   return (
     <section className="flex flex-col justify-center gap-4 py-8 md:py-10">
       <h2 className={subtitle({ class: "mt-4" })}>Datos fijos:</h2>
@@ -128,7 +136,6 @@ export default function Home() {
               <span>Comprobante: </span>
               <input
                 className="py-1 px-2 border border-gray-500 rounded"
-                type="number"
                 {...register(`comprobante`, {
                   required: true,
                 })}
@@ -303,22 +310,26 @@ export default function Home() {
           </Button>
         </div>
       </form>
-      <PDFViewer height={1200}>
-        <PDF
-          IVA={datos.IVA}
-          cliente={datos.cliente}
-          comprobante={datos.comprobante}
-          condVenta={datos.condVenta}
-          contacto={datos.contacto}
-          domicilio={datos.domicilio}
-          expediente={datos.expediente}
-          fecha={datos.fecha}
-          itemsList={datos.itemsList}
-          presupuesto={datos.presupuesto}
-          vendedor={datos.vendedor}
-        />
-      </PDFViewer>
-      <PDFDownloadLink
+      {loaded ? (
+        <PDFViewer height={1200}>
+          <PDF
+            IVA={datos.IVA}
+            cliente={datos.cliente}
+            comprobante={datos.comprobante}
+            condVenta={datos.condVenta}
+            contacto={datos.contacto}
+            domicilio={datos.domicilio}
+            expediente={datos.expediente}
+            fecha={datos.fecha}
+            itemsList={datos.itemsList}
+            presupuesto={datos.presupuesto}
+            vendedor={datos.vendedor}
+          />
+        </PDFViewer>
+      ) : (
+        ""
+      )}
+      {/* <PDFDownloadLink}
         document={
           <PDF
             IVA={datos.IVA}
@@ -337,7 +348,7 @@ export default function Home() {
         fileName="dsfdsf"
       >
         Descargar
-      </PDFDownloadLink>
+      </PDFDownloadLink> */}
     </section>
   );
 }
