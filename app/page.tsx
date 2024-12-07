@@ -4,48 +4,16 @@ import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
 import { Control, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useEffect } from "react";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 
 import { subtitle } from "@/components/primitives";
 import Logo from "@/public/logo-portal.png";
+import {
+  defaultDataCliente,
+  defaultDataVendedor,
+  FormValues,
+} from "@/components/utils";
 import PDF from "@/components/PDF";
-
-type FormValues = {
-  itemsList: {
-    descripcion: string;
-    cantidad: number | null;
-    precio: number | null;
-  }[];
-  comprobante: string;
-  presupuesto: string;
-  fecha: string;
-  cliente: string;
-  domicilio: string;
-  vendedor: string;
-  contacto: string;
-  IVA: string;
-  expediente: string;
-  condVenta: string;
-};
-
-const defaultDataCliente: Record<string, { domicilio: string }> = {
-  "DIRECCION DE MATERIALES Y CONSTRUCCIONES ESCOLARES": {
-    domicilio: "DIEGO DE VILLAROEL 339",
-  },
-  Policia: {
-    domicilio: "Calle Falsa 1234",
-  },
-};
-
-const defaultDataVendedor: Record<string, { contacto: string }> = {
-  "PALACIO EZEQUIEL": {
-    contacto: "381-5116763",
-  },
-  "DIP RAMIRO": {
-    contacto: "381-4791893",
-  },
-};
-
 function getTotal(payload: FormValues["itemsList"]) {
   let total = 0;
 
@@ -68,8 +36,10 @@ function TotalAmout({ control }: { control: Control<FormValues> }) {
 }
 
 export default function Home() {
-  const today = new Date().toISOString().split("T")[0];
-
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Mes empieza en 0
+  const day = String(today.getDate()).padStart(2, "0");
   const {
     register,
     formState: { errors },
@@ -89,7 +59,7 @@ export default function Home() {
       ],
       comprobante: "",
       presupuesto: "",
-      fecha: today,
+      fecha: `${year}-${month}-${day}`,
       cliente: "",
       domicilio: "",
       vendedor: "",
@@ -108,7 +78,7 @@ export default function Home() {
     },
   });
 
-  // const datos = watch();
+  const datos = watch();
 
   // console.log(datos);
 
@@ -179,7 +149,6 @@ export default function Home() {
               <span>Fecha:</span>
               <input
                 className="py-1 px-2 border border-gray-500 rounded"
-                defaultValue={today}
                 type="date"
                 {...register(`fecha`, {
                   required: true,
@@ -334,12 +303,40 @@ export default function Home() {
           </Button>
         </div>
       </form>
-      <PDFDownloadLink document={<PDF />} fileName="dsfdsf">
-        {({ blob, url, loading, error }) => {
-          if (loading) return "Cargando...";
-          if (error) return "Error al generar el PDF";
-          if (blob) return <Button>Descargar</Button>;
-        }}
+      <PDFViewer height={1200}>
+        <PDF
+          IVA={datos.IVA}
+          cliente={datos.cliente}
+          comprobante={datos.comprobante}
+          condVenta={datos.condVenta}
+          contacto={datos.contacto}
+          domicilio={datos.domicilio}
+          expediente={datos.expediente}
+          fecha={datos.fecha}
+          itemsList={datos.itemsList}
+          presupuesto={datos.presupuesto}
+          vendedor={datos.vendedor}
+        />
+      </PDFViewer>
+      <PDFDownloadLink
+        document={
+          <PDF
+            IVA={datos.IVA}
+            cliente={datos.cliente}
+            comprobante={datos.comprobante}
+            condVenta={datos.condVenta}
+            contacto={datos.contacto}
+            domicilio={datos.domicilio}
+            expediente={datos.expediente}
+            fecha={datos.fecha}
+            itemsList={datos.itemsList}
+            presupuesto={datos.presupuesto}
+            vendedor={datos.vendedor}
+          />
+        }
+        fileName="dsfdsf"
+      >
+        Descargar
       </PDFDownloadLink>
     </section>
   );
